@@ -46,19 +46,32 @@ export const loginAfterSignupRequest = async (req, res) => {
 
       const id_inicio_session = insert_session.rows[0].qry_auth.id;
 
+      const emailParam = results.rows[0].qry_auth[0].email;
+
+    
+      const data_user = await pool.query(
+        `SELECT auth.qry_auth(operacion => $1, email_param => $2)`,
+        [4, emailParam]
+      );
+
       //inicar session del usuario
       const token = await createAccessToken({
-        id: results.rows[0].qry_auth[0].id,
-        email: results.rows[0].qry_auth[0].email,
-        id_rol: results.rows[0].qry_auth[0].id_rol,
-        id_escuela: results.rows[0].qry_auth[0].id_escuela,
-        id_tipo_usuario: results.rows[0].qry_auth[0].id_tipo_usuario,
-        imagen_profile: results.rows[0].qry_auth[0].imagen_profile,
-        id_tercero: results.rows[0].qry_auth[0].id_tercero,
-        id_tipo_licencia: results.rows[0].qry_auth[0].id_tipo_licencia,
-        fecha_exp: results.rows[0].qry_auth[0].fecha_expiracion_licencia,
+        id: data_user.rows[0].qry_auth[0].id,
+        email: data_user.rows[0].qry_auth[0].email,
+        id_rol: data_user.rows[0].qry_auth[0].id_rol,
+        id_escuela: data_user.rows[0].qry_auth[0].id_escuela,
+        id_tipo_usuario: data_user.rows[0].qry_auth[0].id_tipo_usuario,
+        imagen_profile: data_user.rows[0].qry_auth[0].image_profile,
+        id_tercero: data_user.rows[0].qry_auth[0].id_tercero,
+        nombre_usuario:
+        data_user.rows[0].qry_auth[0].primer_nombre +
+          " " +
+          data_user.rows[0].qry_auth[0].primer_apellido,
+        id_tipo_licencia: data_user.rows[0].qry_auth[0].id_tipo_licencia,
+        fecha_exp: data_user.rows[0].qry_auth[0].fecha_expiracion_licencia,
         id_inicio_session: id_inicio_session,
       });
+      
 
       res.cookie("token", token);
 
@@ -112,7 +125,7 @@ export const loginRequest = async (req, res) => {
       [4, email]
     );
     if (results.rows[0].qry_auth == 0 || results.rows[0].qry_auth == null) {
-      return res.status(400).json({ message: "Error de credencales" });
+      return res.status(400).json({ message: "Error de credenciales" });
     }
     //validar contraseña y hash
     const isMatch = await bcrypt.compare(
