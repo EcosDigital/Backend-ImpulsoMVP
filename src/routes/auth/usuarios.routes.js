@@ -2,7 +2,7 @@ import { Router } from 'express'
 
 import {authRequiredWithRoleShared} from '../../middlewares/validateToken.js'
 
-import { createUserRequest, getDataUsuarioRequest, getInfoTerceroRequest, getListTipoUserRequest, getTipoEstadoUserRequest, getUserForTerceroRequest, getUserRecentsRequest, updatePasswordUserRequest, updateUserRequest } from '../../controllers/auth/usuarios.js'
+import { createUserRequest, getDataUsuarioRequest, getHistorialSigninRequest, getInfoTerceroRequest, getListTipoUserRequest, getTipoEstadoUserRequest, getUserForTerceroRequest, getUserRecentsRequest, updatePasswordUserRequest, updateUserRequest } from '../../controllers/auth/usuarios.js'
 
 const router = Router()
 
@@ -23,5 +23,7 @@ router.get(`/getDataUser/:id`, authRequiredWithRoleShared, getDataUsuarioRequest
 router.put(`/updateUser/:id`, authRequiredWithRoleShared, updateUserRequest)
 
 router.put(`/updatePasswordUser/:id`, authRequiredWithRoleShared, updatePasswordUserRequest)
+
+router.get("/getHistorialSignin/:id", authRequiredWithRoleShared, getHistorialSigninRequest)
 
 export default router

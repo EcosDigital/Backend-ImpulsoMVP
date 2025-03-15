@@ -48,7 +48,6 @@ export const loginAfterSignupRequest = async (req, res) => {
 
       const emailParam = results.rows[0].qry_auth[0].email;
 
-    
       const data_user = await pool.query(
         `SELECT auth.qry_auth(operacion => $1, email_param => $2)`,
         [4, emailParam]
@@ -64,14 +63,13 @@ export const loginAfterSignupRequest = async (req, res) => {
         imagen_profile: data_user.rows[0].qry_auth[0].image_profile,
         id_tercero: data_user.rows[0].qry_auth[0].id_tercero,
         nombre_usuario:
-        data_user.rows[0].qry_auth[0].primer_nombre +
+          data_user.rows[0].qry_auth[0].primer_nombre +
           " " +
           data_user.rows[0].qry_auth[0].primer_apellido,
         id_tipo_licencia: data_user.rows[0].qry_auth[0].id_tipo_licencia,
         fecha_exp: data_user.rows[0].qry_auth[0].fecha_expiracion_licencia,
         id_inicio_session: id_inicio_session,
       });
-      
 
       res.cookie("token", token);
 
@@ -107,6 +105,19 @@ export const verifyTokenRequest = async (req, res) => {
 };
 
 export const logoutRequest = async (req, res) => {
+  //obtener id de cierre
+  const { id_inicio_session } = req.user;
+
+  await pool.query(
+    `SELECT auth.qry_auth(operacion => $1, fecha_cierre_param  => $2, hora_cierre_param => $3, id_param => $4)`,
+    [
+      5,
+      new Date().toISOString().slice(0, 10),
+      new Date().toTimeString().slice(0, 8),
+      id_inicio_session,
+    ]
+  );
+
   res.cookie("token", "", {
     httpOnly: true,
     secure: true,

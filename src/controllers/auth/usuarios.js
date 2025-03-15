@@ -240,11 +240,47 @@ export const updatePasswordUserRequest = async (req, res) => {
       [8, id, passwordHash]
     );
 
-    return res.status(200).json({message: 'Contraseña actualizada correctamente'})
+    return res
+      .status(200)
+      .json({ message: "Contraseña actualizada correctamente" });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({ message: "Hubo un error inesperado!" });
+  }
+};
+
+export const getHistorialSigninRequest = async (req, res) => {
+  try {
+    //obtener el id de registro
+    const { id } = req.params;
+
+    //validar existencia de usuario
+    const data_user = await pool.query(
+      `SELECT auth.qry_auth(operacion => $1, id_usuario_param => $2)`,
+      [1, id]
+    );
+    if(data_user.rows[0].qry_auth == null || data_user.rows[0].qry_auth == 0){
+      return res.status(404).json({message : "No existe el usuario..."})
+    }
+
+    //consultar historial de usuario
+    const results = await pool.query(
+      `SELECT auth.qry_auth(operacion => $1,  id_usuario_param => $2)`,
+      [2, id]
+    );
+    //validar existencias
+    if (results.rows[0].qry_auth == null || results.rows[0].qry_auth == 0) {
+      return res
+        .status(404)
+        .json({ message: "No hay inicios de este usuario..." });
+    }
+
+
+    return res.status(200).json(results.rows[0].qry_auth)
 
   } catch (error) {
     console.log(error);
-    
-    return res.status(500).json({message: 'Hubo un error inesperado!'})
+    return res.status(500).json({message: "Hubo un eror inesperado..."})
   }
 };
