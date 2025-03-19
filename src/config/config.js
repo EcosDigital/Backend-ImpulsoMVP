@@ -1,6 +1,5 @@
 export const BACKEND_PORT = process.env.PORT_SERVER || 4200
 export const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
-export const FRONTEND_URL_2 = process.env.FRONTEND_URL_2
 
 export const DB_USER = process.env.DB_USER
 export const DB_HOST = process.env.DB_HOST
