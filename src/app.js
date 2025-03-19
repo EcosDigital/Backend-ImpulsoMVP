@@ -33,9 +33,15 @@ const allowedOrigins = [
 app.use(
     cors({
         credentials: true,
-        origin: allowedOrigins
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        }
     })
-)
+);
 
 //visualizar las peticiones del servidor por consola
 app.use(morgan("dev"))
