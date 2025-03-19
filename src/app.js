@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import { checkConnection } from './config/db.js'
 
 import routes from './routes.js'
-import { FRONTEND_URL } from './config/config.js'
+import { FRONTEND_URL, FRONTEND_URL_2 } from './config/config.js'
 
 //inicializacion del servidor
 const app = express()
@@ -24,10 +24,16 @@ multer({ dest: path.join(__dirname, '../uploads/') });
 app.use('/uploads', express.static(path.join(__dirname, '../uploads'))); //carpeta pubica
 
 //configuracion de los cors
+
+const allowedOrigins = [
+    FRONTEND_URL,
+    FRONTEND_URL_2
+]
+
 app.use(
     cors({
         credentials: true,
-        origin: FRONTEND_URL
+        origin: allowedOrigins
     })
 )
 
