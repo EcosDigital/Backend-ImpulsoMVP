@@ -1,5 +1,7 @@
 import { Router } from "express";
 
+import { authRequiredEdu } from '../../middlewares/validateToken.js'
+
 import {
   uploadDepartamentoRequest,
   uploadMunicipiosRequest,
@@ -20,6 +22,7 @@ router.post("/uploadImage", uploadImageRequest);
 
 router.post(
   "/uploadPreguntasResponses",
+  authRequiredEdu,
   uploadPreguntasRespuestasRequest
 );
 

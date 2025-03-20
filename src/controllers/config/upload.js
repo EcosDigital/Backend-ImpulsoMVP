@@ -200,7 +200,7 @@ export const uploadPreguntasRespuestasRequest = async (req, res) => {
           //insertar registro de la pregunta
           try {
             for (const row of rows) {
-              const query = `INSERT INTO educacion.cfg_preguntas(texto_apoyo, ilustracion_apoyo, texto_pregunta, id_area, id_nivel, tiempo_estimado, id_usuario, fecha_creacion, is_active, ia, texto_pista, texto_explicacion) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id `;
+              const query = `INSERT INTO educacion.cfg_preguntas(texto_apoyo, ilustracion_apoyo, texto_pregunta, id_area, id_nivel, tiempo_estimado, id_usuario, fecha_creacion, is_active, ia, texto_pista, texto_explicacion, periodo_referencia) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id `;
 
               let jsonText = JSON.stringify({ parrafo: row.TEXTO_APOYO }) || "" ;
 
@@ -233,12 +233,13 @@ export const uploadPreguntasRespuestasRequest = async (req, res) => {
                 id_area,
                 id_nivel,
                 row.TIEMPO_ESTIMADO,
-                1,
+                req.user.id,
                 new Date(),
                 row.ACTIVO,
                 row.IA,
                 row.TEXTO_PISTA,
                 row.TEXTO_EXPLICACION,
+                parseInt(row.FECHA_CUADERNILLO, 10)
               ];
 
               const results = await pool.query(query, values);
