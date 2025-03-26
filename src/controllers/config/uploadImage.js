@@ -3,7 +3,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import multer from "multer";
 import sharp from "sharp";
-import csvParser from "csv-parser";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

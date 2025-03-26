@@ -41,6 +41,7 @@ export const registerPreguntaRequest = async (req, res) => {
       is_active,
       is_ia,
       respuestas,
+      perido_referencia,
     } = req.body;
     //registrar pregunta y obtener el id
 
@@ -49,7 +50,7 @@ export const registerPreguntaRequest = async (req, res) => {
 
     const results = await pool.query(
       `SELECT educacion.qry_preguntas(operacion => $1, texto_apoyo_param => $2, ilustracion_apoyo_param => $3, texto_pregunta_param => $4,
-    id_area_param => $5, id_nivel_param => $6, tiempo_estimado_param => $7, id_user => $8, parametro_estado => $9, is_ia => $10, texto_pista_param => $11, texto_explicacion_param => $12)`,
+    id_area_param => $5, id_nivel_param => $6, tiempo_estimado_param => $7, id_user => $8, parametro_estado => $9, is_ia => $10, texto_pista_param => $11, texto_explicacion_param => $12, periodo_referencia_param => $13)`,
       [
         1,
         jsonText,
@@ -63,6 +64,7 @@ export const registerPreguntaRequest = async (req, res) => {
         is_ia,
         texto_pista,
         texto_explicacion,
+        perido_referencia
       ]
     );
 
