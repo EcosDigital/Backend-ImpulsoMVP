@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { authRequiredWithRoleShared } from '../middlewares/validateToken.js'
+import { authRequired, authRequiredEdu, authRequiredWithRoleShared } from '../middlewares/validateToken.js'
 
 import {
   getAllLicenciaSchoolRequest,
@@ -39,7 +39,5 @@ router.get("/getAllLicenciaSchool", getAllLicenciaSchoolRequest)
 router.post("/searchDynamics", authRequiredWithRoleShared, searchDynamicsRequest)
 
 router.get("/getRolUser", authRequiredWithRoleShared, getRolUserRequest)
-
-
 
 export default router;

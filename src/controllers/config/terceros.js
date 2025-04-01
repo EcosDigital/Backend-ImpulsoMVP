@@ -78,7 +78,6 @@ export const registerTerceroRequest = async (req, res) => {
       .status(200)
       .json({ message: "Registro almacenado corretamente..." });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ message: "Hubo un error inesperado" });
   }
 };
@@ -98,7 +97,7 @@ export const getTerceroRequest = async (req, res) => {
 
 export const updateTerceroRequest = async (req, res) => {
   try {
-    //obtener el aprametro de registro
+    //obtener el parametro de registro
     const { id } = req.params;
     //obtener datos del req body
     const {

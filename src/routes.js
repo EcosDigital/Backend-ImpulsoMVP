@@ -9,6 +9,9 @@ import UsuariosRoutes from './routes/auth/usuarios.routes.js'
 
 import PreguntasRoutes from './routes/academico/preguntas.routes.js'
 import QuizRoutes from './routes/academico/quiz.routes.js'
+
+import GroupWorksRoutes from './routes/config/groupWorks.routes.js'
+
 //rutas para el area de modular (modulos)
 import ModulRoutes from './routes/config/modulos.routes.js'
 
@@ -27,6 +30,7 @@ router.use("/api", UsuariosRoutes)
 router.use("/api", PreguntasRoutes)
 //rutas de registro de resultados del quiz
 router.use("/api", QuizRoutes)
+router.use("/api", GroupWorksRoutes) // rutas del modulo (grupos de trabajo)
 //rutas para el modulo de uploads (archivos csv pedf e imagenes)
 router.use("/api", uploadRoutes)
 router.use("/api", ModulRoutes)
