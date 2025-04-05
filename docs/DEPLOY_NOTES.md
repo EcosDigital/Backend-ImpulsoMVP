@@ -1,28 +1,65 @@
-## CREAR LAS TABLAS PARA LA SECCION GRUPOS DE TRABAJO
+## VERSSION 0.0.6 (TABLA DE PUNTUACION)
 
-CREATE TABLE educacion.ref_tipo_prueba_icfes(
-        id serial primary key not null,
-        nombre varchar(60) not null);
+## Adicionar campo 
+adicionar un campo "id_Escuela" en educacion.cfg_resultados
+ALTER TABLE educacion.cfg_resultad ADD COLUMN id_escuela INT
 
-CREATE TABLE educacion.cfg_grupos_de_trabajo(
-        id serial primary key not null,
-        id_escuela int not null REFERENCES configuracion.cfg_escuelas(id),
-        nombre_grupo varchar(200) not null,
-        id_tipo_prueba_icfes int not null REFERENCES educacion.ref_tipo_prueba(id),
-        id_director_grupo int not null REFERENCES configuracion.cfg_terceros(id),
-        is_active boolean not null,
-        id_usuario_at int not null REFERENCES configuracion.cfg_usuarios(id),        
-        created_at timestamp not null,
-        update_at timestamp);
+## modificacion de controlador
+se modifico el controlador que inserta los resultados
+para lograr registrar el parametro id_escuela
 
-CREATE TABLE educacion.cfg_grupos_trabajo_alumnos (
-        id serial primary key not null,
-        id_grupo_trabajo int not null REFERENCES educacion.cfg_grupos_de_trabajo,
-        id_escuela int not null REFERENCES configuracion.cfg_escuelas(id),
-        id_alumno int not null REFERENCES configuracion.cfg_terceros(id),
-        id_usuario_at int not null REFERENCES configuracion.cfg_usuarios(id),
-        created_at timestamp not null)
+## modifiacion del sp
+se modifico la funcion en DB "educacion.qry_quiz"
+con el objetivo de lograr registrar el parametro id_escuela
 
- INSERT INTO educacion.ref_tipo_prueba_icfes(nombre) values('Saber 11 ');
+## Creacion del sp para listar las puntaciones
+CREATE OR REPLACE FUNCTION educacion.qry_clasificacion_alumnos(
+    OPERACION INTEGER DEFAULT NULL,
+    id_escuela_p INTEGER DEFAULT NULL,
+    id_grupo_p INTEGER DEFAULT NULL
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+AS $function$
+DECLARE
+    resultado jsonb;
+BEGIN
+    CASE
+        WHEN operacion = 1 THEN
+            SELECT to_jsonb(array_agg(t))
+            INTO resultado
+            FROM (
+                SELECT 
+                    t.primer_nombre || ' ' || t.primer_apellido as alumno,
+                    g.nombre_grupo,
+                    SUM(
+                        CASE 
+                            WHEN r.id_nivel_dificultad = 1 THEN r.porcentaje_total * 0.20
+                            WHEN r.id_nivel_dificultad = 2 THEN r.porcentaje_total * 0.30
+                            WHEN r.id_nivel_dificultad = 3 THEN r.porcentaje_total * 0.50
+                            ELSE 0
+                        END
+                    ) AS puntaje_total,
+                    CAST(
+                        SUM(r.porcentaje_aciertos * 0.10) AS INTEGER
+                    ) AS preguntas_acertadas,
+                    SUM(
+                        preguntas_incorrectas
+                    )as preguntas_fallidas
+                FROM educacion.cfg_resultados r
+                JOIN configuracion.cfg_usuarios u on u.id = r.id_usuario
+                JOIN configuracion.cfg_terceros t on t.id = u.id_tercero
+                JOIN educacion.cfg_grupos_trabajo_alumnos gt on gt.id_alumno = t.id
+                JOIN educacion.cfg_grupos_de_trabajo g on g.id = gt.id_grupo_trabajo
+                WHERE r.id_tipo_prueba = 1 AND id_escuela = id_escuela_p
+                AND (id_grupo_p IS NULL OR gt.id_grupo = id_grupo_p)
+                GROUP BY t.primer_nombre, t.primer_apellido, g.nombre_grupo
+                ORDER BY puntaje_total DESC
+            ) t;
 
- ## NOTA IMPORTATE : CREAR EL SP QRY_GRUPOS FOR SCHEMA EDUCACION ##
+            RETURN resultado;
+
+    END CASE;
+END;
+$function$;
+

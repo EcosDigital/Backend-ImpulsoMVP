@@ -14,7 +14,7 @@ export const registerResultadoQuiz = async (req, res) => {
 
     //insertar registro
     await pool.query(
-      `SELECT educacion.qry_quiz(operacion => $1, id_usuario_param => $2, id_tipo_quiz => $3, preguntas_acertadas => $4, preguntas_falladas => $5, porcentaje_final => $6, porcentaje_correcto => $7, tiempo_estimado => $8, NIVEL_DIFICULTAD => $9)`,
+      `SELECT educacion.qry_quiz(operacion => $1, id_usuario_param => $2, id_tipo_quiz => $3, preguntas_acertadas => $4, preguntas_falladas => $5, porcentaje_final => $6, porcentaje_correcto => $7, tiempo_estimado => $8, NIVEL_DIFICULTAD => $9, id_escuela_p => $10)`,
       [
         2,
         req.user.id,
@@ -25,6 +25,7 @@ export const registerResultadoQuiz = async (req, res) => {
         porcentaje,
         tiempo_estimado,
         id_nivel_dificultad,
+        req.user.id_escuela
       ]
     );
 
