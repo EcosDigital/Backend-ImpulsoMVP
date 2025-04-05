@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { authRequiredEdu, authRequiredWithRoleShared } from "../../middlewares/validateToken.js";
+import { authRequired, authRequiredEdu, authRequiredWithRoleShared } from "../../middlewares/validateToken.js";
 import { validateSchema } from "../../middlewares/validator.middlewares.js";
 
 import { regsterGrupoSchema } from "../../schema/config/groupWorks.schema.js";
@@ -20,7 +20,7 @@ const router = Router();
 
 router.get(
   "/getGruposRecents",
-  authRequiredEdu,
+  authRequired,
   getGrupoRecentRequest
 );
 
