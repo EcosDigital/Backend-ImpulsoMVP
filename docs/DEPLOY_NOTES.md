@@ -1,8 +1,16 @@
-## PATH VERSSION 0.0.6 (TABLA DE PUNTUACION)
- Modificacion a la ruta backend ("/getGruposRecents")
- con el objetivo de que sea publico para todos los usuarios
- ya que se necesita acceso de los estudiantes para filtar su clasificacion
- grupal y global
- NOTA: EN UNA FUTURA VERSION SE DEBE MEDIFICAR ESTO PARA QUE SEAN 
- DOS RUTAS DIFERENTES YA QUE A LARGO PLAZO UEDE GENERAR UN PROBLEMA
- DE USABILIDAD
+## PATH VERSSION 0.0.7 (DETALLE DE LOS RESULTADOS QUIZ)
+
+Crear tabla para almacenar los  detalles por area
+de resultados y ofrecer mejor clasificacion
+
+CREATE TABLE educacion.mov_detalle_resultados(
+    id SERIAL PRIMARY KEY NOT NULL,
+    id_resultado INT NOT NULL REFERENCES educacion.cfg_resultados(id),
+    id_escuela INT NOT NULL REFERENCES configuracion.cfg_escuelas(id),
+    id_area INT NOT NULL REFERENCES educacion.ref_area_de_estudio(id),
+    preguntas_correctas INT NOT NULL,
+    total_preguntas INT NOT NULL,
+    presicion_aciertos INT NOT NULL
+);
+
+## NOTA: ACTUALIZAR EL QRY_QUIZ
