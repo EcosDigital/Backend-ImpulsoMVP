@@ -245,16 +245,13 @@ export const updateScholRequest = async (req, res) => {
       id_licencia,
       estado,
       principal,
+      maneja_bot,
+      api_ia
     } = req.body;
-
-    //revisar que tipo de licencia usara
-    const fecha_limit = new Date(
-      new Date().setDate(new Date().getDate() + (id_licencia == 1 ? 5 : 365))
-    );
 
     //actualizar el registro
     await pool.query(
-      `SELECT configuracion.qry_escuelas (operacion => $1, nombre_escuela_param => $2, id_tipo_escuela_param => $3, telefono_param => $4, direccion_param => $5, correo_contacto_param => $6, id_departamento_param => $7, id_ciudad_param => $8, representante_legal_param => $9, id_cantidad_estudiantes_param => $10, id_cantidad_docentes_param => $11, id_tipo_licencia_param => $12, estado => $13, principal_param => $14, fecha_exp => $15, id_usuario_param => $16, id_registro => $17)`,
+      `SELECT configuracion.qry_escuelas (operacion => $1, nombre_escuela_param => $2, id_tipo_escuela_param => $3, telefono_param => $4, direccion_param => $5, correo_contacto_param => $6, id_departamento_param => $7, id_ciudad_param => $8, representante_legal_param => $9, id_cantidad_estudiantes_param => $10, id_cantidad_docentes_param => $11, id_tipo_licencia_param => $12, estado => $13, principal_param => $14, id_usuario_param => $15, id_registro => $16, maneja_bot => $17, api_ia_p => $18)`,
       [
         6,
         nombre_escuela,
@@ -270,15 +267,19 @@ export const updateScholRequest = async (req, res) => {
         id_licencia,
         estado,
         principal,
-        fecha_limit,
         req.user.id,
-        id
+        id,
+        maneja_bot,
+        api_ia
       ]
     );
 
-    return res.status(200).json({message : "Registro actualizado exitosamente..."})
-
+    return res
+      .status(200)
+      .json({ message: "Registro actualizado exitosamente..." });
   } catch (error) {
-    return res.status(500).json({message: "Hubo un error inesperado!"})
+    console.log(error);
+    
+    return res.status(500).json({ message: "Hubo un error inesperado!" });
   }
 };

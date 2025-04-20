@@ -13,6 +13,8 @@ import QuizRoutes from './routes/academico/quiz.routes.js'
 import GroupWorksRoutes from './routes/config/groupWorks.routes.js'
 import PuntuacionesRoutes from './routes/academico/puntuaciones.routes.js'
 
+import BootRoutes from './routes/IA/boot.routes.js'
+
 //rutas para el area de modular (modulos)
 import ModulRoutes from './routes/config/modulos.routes.js'
 
@@ -36,5 +38,7 @@ router.use("/api", PuntuacionesRoutes) // rutas del modulo de clasificacion por 
 //rutas para el modulo de uploads (archivos csv pedf e imagenes)
 router.use("/api", uploadRoutes)
 router.use("/api", ModulRoutes)
+router.use("/api", BootRoutes)
+
 
 export default router
