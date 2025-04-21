@@ -7,7 +7,4 @@ const router = Router();
 
 router.post("/chat/:id_escuela", chatRequest )
 
-/*const API_KEY = "AIzaSyAidFrZxabzuLHQyphWBIv8UotQ3_OHj2E";
-*/
-
 export default router;
