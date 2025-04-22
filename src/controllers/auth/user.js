@@ -130,6 +130,7 @@ export const loginRequest = async (req, res) => {
   try {
     //obtener datos del req body
     const { email, password } = req.body;
+
     //validar existencia del usuario por email
     const results = await pool.query(
       `SELECT auth.qry_auth(operacion => $1, email_param => $2)`,
@@ -138,6 +139,22 @@ export const loginRequest = async (req, res) => {
     if (results.rows[0].qry_auth == 0 || results.rows[0].qry_auth == null) {
       return res.status(400).json({ message: "Error de credenciales" });
     }
+
+    //validar estado de la escuela a la que pertenece el usuario
+    const resultsSchool = await pool.query(
+      `SELECT configuracion.qry_escuelas(operacion => $1, id_registro => $2)`,
+      [7, results.rows[0].qry_auth[0].id_escuela]
+    );
+
+    if (resultsSchool.rows[0].qry_escuelas[0].is_active == false) {
+      return res.status(400).json({message : "Error de credenciales"})
+    }
+
+    //validar estado del usuario
+    if (results.rows[0].qry_auth[0].activo == false) {
+      return res.status(400).json({message : "Error de credenciales"})
+    }
+
     //validar contraseña y hash
     const isMatch = await bcrypt.compare(
       password,
