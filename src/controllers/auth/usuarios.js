@@ -127,6 +127,21 @@ export const createUserRequest = async (req, res) => {
       password,
       image_profile,
     } = req.body;
+
+    //evaluar si se alcanzo el el limite de usaurios por licencia
+    const limitUserSchool = await pool.query(
+      `SELECT configuracion.qry_generalidades(operacion => $1, id_registro => $2)`,
+      [10, req.user.id_escuela]
+    );
+
+    const cantUser = await pool.query(`SELECT auth.qry_auth(operacion => $1, id_escuela_p => $2)`, [
+      6, req.user.id_escuela
+    ]);
+
+    if(cantUser >= limitUserSchool) {
+      return res.status(429).json({message : "Has alcanzado el limite permitido de usuarios..."})
+    }
+    
     //evaluar existencia del usuario por email
     const results = await pool.query(
       `SELECT configuracion.qry_usuarios(operacion => $1, email_param => $2)`,
@@ -260,8 +275,8 @@ export const getHistorialSigninRequest = async (req, res) => {
       `SELECT auth.qry_auth(operacion => $1, id_usuario_param => $2)`,
       [1, id]
     );
-    if(data_user.rows[0].qry_auth == null || data_user.rows[0].qry_auth == 0){
-      return res.status(404).json({message : "No existe el usuario..."})
+    if (data_user.rows[0].qry_auth == null || data_user.rows[0].qry_auth == 0) {
+      return res.status(404).json({ message: "No existe el usuario..." });
     }
 
     //consultar historial de usuario
@@ -276,11 +291,9 @@ export const getHistorialSigninRequest = async (req, res) => {
         .json({ message: "No hay inicios de este usuario..." });
     }
 
-
-    return res.status(200).json(results.rows[0].qry_auth)
-
+    return res.status(200).json(results.rows[0].qry_auth);
   } catch (error) {
     console.log(error);
-    return res.status(500).json({message: "Hubo un eror inesperado..."})
+    return res.status(500).json({ message: "Hubo un eror inesperado..." });
   }
 };
