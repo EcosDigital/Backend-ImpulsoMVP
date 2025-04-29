@@ -73,10 +73,13 @@ export const registerPreguntaRequest = async (req, res) => {
     //recorer e insertar cada pregunta
     async function insertarRespuestas() {
       for (const item of respuestas) {
-        await pool.query(
-          `SELECT educacion.qry_preguntas(operacion => $1, id_pregunta_param => $2, texto_respuesta_param => $3, es_correcta_param => $4)`,
-          [2, id_pregunta, item.texto, item.is_correcto]
-        );
+        
+        if (item != null) {
+          await pool.query(
+            `SELECT educacion.qry_preguntas(operacion => $1, id_pregunta_param => $2, texto_respuesta_param => $3, es_correcta_param => $4)`,
+            [2, id_pregunta, item.texto, item.is_correcto]
+          );
+        }
       }
     }
 
@@ -104,34 +107,6 @@ export const getPreguntasForQuizRequest = async (req, res) => {
       sociales,
       ingles,
     } = req.body;
-    //realizar consulta de preguntas y respuestas
-    /*const results = await pool.query(
-      `SELECT 
-          p.id AS pregunta_id,
-          p.texto_apoyo->>'parrafo' as texto_apoyo,
-          p.ilustracion_apoyo,
-          p.texto_pregunta,
-          a.nombre as area,
-          n.nombre as nivel_dificultad,
-          p.tiempo_estimado,
-          p.texto_pista,
-          p.texto_explicacion,
-          json_agg(
-              json_build_object(
-                  'id', r.id,
-                  'texto_respuesta', r.texto_respuesta,
-                  'es_correcta', r.es_correcta
-              )
-          ) AS respuestas
-      FROM educacion.cfg_preguntas p
-      LEFT JOIN educacion.cfg_respuestas r ON p.id = r.id_pregunta
-      LEFT JOIN educacion.ref_area_estudio a ON p.id_area = a.id
-      LEFT JOIN educacion.ref_nivel_dificultad n ON n.id = p.id_nivel
-      WHERE p.id IN (
-          SELECT id FROM educacion.cfg_preguntas ORDER BY RANDOM() LIMIT 10
-      )
-      GROUP BY p.id, p.texto_pregunta, p.texto_apoyo, p.ilustracion_apoyo, a.nombre, n.nombre,       p.tiempo_estimado, p.texto_pista, p.texto_explicacion;`
-    );*/
 
     const results = await pool.query(
       `SELECT educacion.qry_quiz(operacion => $1, limite_preguntas => $2, nivel_dificultad => $3, area_lectura_critica => $4, area_matematicas => $5, area_ciencias_naturales => $6, area_ciencias_sociales => $7, area_ingles => $8)`,
