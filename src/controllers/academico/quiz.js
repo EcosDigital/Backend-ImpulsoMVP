@@ -31,16 +31,16 @@ export const registerResultadoQuiz = async (req, res) => {
     );
 
     //insertar el detalle del registro
-    const id_resultado =  parseInt(resultado.rows[0].qry_quiz.id, 10);
+    const id_resultado = parseInt(resultado.rows[0].qry_quiz.id, 10);
 
     for (let i = 0; i < detalle.length; i++) {
       //definir el area segun su nombre y ID
       const areaMap = {
         "Lectura Crítica": 1,
-        "Matemáticas": 2,
+        Matemáticas: 2,
         "Ciencias Naturales": 3,
         "Sociales y Ciudadanas": 4,
-        "Inglés": 5,
+        Inglés: 5,
       };
 
       const id_area = areaMap[detalle[i].area] ?? 0;
