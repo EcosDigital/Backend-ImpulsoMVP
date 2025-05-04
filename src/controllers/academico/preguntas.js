@@ -48,6 +48,25 @@ export const registerPreguntaRequest = async (req, res) => {
     //convertir texto a json
     const jsonText = { parrafo: texto_apoyo };
 
+    //validar existencia de preguntas similares
+    const similares = await pool.query(
+      `SELECT educacion.qry_preguntas(operacion => $1, id_area_param => $2, id_nivel_param => $3, texto_pregunta_param => $4, texto_apoyo_param => $5)`,
+      [5, id_area, id_nivel, texto_pregunta, jsonText]
+    );
+
+    if (
+      similares.rows[0].qry_preguntas.mensaje ==
+      "Se encontraron preguntas similares"
+    ) {
+      return res
+        .status(409)
+        .json({
+          message:
+            "Se detectaron preguntas previamente registradas con contenido similar.",
+        });
+    }
+
+    //insertar registro de pregunta
     const results = await pool.query(
       `SELECT educacion.qry_preguntas(operacion => $1, texto_apoyo_param => $2, ilustracion_apoyo_param => $3, texto_pregunta_param => $4,
     id_area_param => $5, id_nivel_param => $6, tiempo_estimado_param => $7, id_user => $8, parametro_estado => $9, is_ia => $10, texto_pista_param => $11, texto_explicacion_param => $12, periodo_referencia_param => $13)`,
@@ -64,7 +83,7 @@ export const registerPreguntaRequest = async (req, res) => {
         is_ia,
         texto_pista,
         texto_explicacion,
-        perido_referencia
+        perido_referencia,
       ]
     );
 
@@ -73,7 +92,6 @@ export const registerPreguntaRequest = async (req, res) => {
     //recorer e insertar cada pregunta
     async function insertarRespuestas() {
       for (const item of respuestas) {
-        
         if (item != null) {
           await pool.query(
             `SELECT educacion.qry_preguntas(operacion => $1, id_pregunta_param => $2, texto_respuesta_param => $3, es_correcta_param => $4)`,
@@ -89,8 +107,6 @@ export const registerPreguntaRequest = async (req, res) => {
       .status(200)
       .json({ message: "Registro almacenado correctamente" });
   } catch (error) {
-    console.log(error);
-
     return res.status(500).json({ message: "Hubo un error inesperado!" });
   }
 };
