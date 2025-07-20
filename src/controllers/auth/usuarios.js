@@ -129,16 +129,18 @@ export const createUserRequest = async (req, res) => {
     } = req.body;
 
     //evaluar si se alcanzo el el limite de usaurios por licencia
-    const limitUserSchool = await pool.query(
+    const resultSchool = await pool.query(
       `SELECT configuracion.qry_generalidades(operacion => $1, id_registro => $2)`,
       [10, req.user.id_escuela]
     );
+
+    const limitUsers = resultSchool.rows[0].qry_generalidades[0].limite_usuarios
 
     const cantUser = await pool.query(`SELECT auth.qry_auth(operacion => $1, id_escuela_p => $2)`, [
       6, req.user.id_escuela
     ]);
 
-    if(cantUser >= limitUserSchool) {
+    if(cantUser >= limitUsers) {
       return res.status(429).json({message : "Has alcanzado el limite permitido de usuarios..."})
     }
     
@@ -181,7 +183,8 @@ export const createUserRequest = async (req, res) => {
     return res
       .status(200)
       .json({ message: "Registro almacenado correctamente" });
-  } catch (error) {
+  } catch (error) { 
+    console.log(error);
     return res.status(500).json({ message: "Hubo un error inesperado" });
   }
 };
