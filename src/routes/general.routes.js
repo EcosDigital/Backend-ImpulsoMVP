@@ -5,14 +5,17 @@ import { authRequired, authRequiredEdu, authRequiredWithRoleShared } from '../mi
 import {
   getAllLicenciaSchoolRequest,
   getDepartamentosRequest,
+  getEstadosTicketRequest,
   getGeneroRequest,
   getLicenciasSchoolRequest,
   getMunicipiosRequest,
+  getProridadTicketRequest,
   getRangoDocentesRequest,
   getRangoEstudiantesRequest,
   getRolUserRequest,
   getTipoDocumentoRequest,
   getTipoInstitucionRequest,
+  getTipoTicketRequest,
   searchDynamicsRequest,
 } from "../controllers/general.js";
 
@@ -39,5 +42,12 @@ router.get("/getAllLicenciaSchool", getAllLicenciaSchoolRequest)
 router.post("/searchDynamics", authRequiredWithRoleShared, searchDynamicsRequest)
 
 router.get("/getRolUser", authRequiredWithRoleShared, getRolUserRequest)
+
+/*seccion de modulo soporte TICKETS */
+router.get("/getEstadosTicket", authRequired, getEstadosTicketRequest)
+
+router.get("/getTipoTicket", authRequired, getTipoTicketRequest)
+
+router.get("/getPrioridadTicket", authRequired, getProridadTicketRequest)
 
 export default router;

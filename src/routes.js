@@ -7,6 +7,9 @@ import TercerosRoutes from './routes/config/terceros.routes.js'
 import userRoutes from './routes/auth/user.routes.js'
 import UsuariosRoutes from './routes/auth/usuarios.routes.js'
 
+//rutas del modulo soporte
+import soporteRoutes from './routes/soporte/tickets.routes.js'
+
 import PreguntasRoutes from './routes/academico/preguntas.routes.js'
 import QuizRoutes from './routes/academico/quiz.routes.js'
 
@@ -39,6 +42,7 @@ router.use("/api", PuntuacionesRoutes) // rutas del modulo de clasificacion por 
 router.use("/api", uploadRoutes)
 router.use("/api", ModulRoutes)
 router.use("/api", BootRoutes)
+router.use("/api", soporteRoutes)
 
 
 export default router

@@ -266,3 +266,55 @@ export const getRolUserRequest = async (req, res) => {
   }
 }
 
+/** SECCION GENERALIDADES DEL MODULO SOPORTE */
+export const getEstadosTicketRequest = async (req, res) => {
+  try {
+    const results = await pool.query(
+      `select * from configuracion.qry_generalidades(11)`
+    );
+    const data = results.rows[0].qry_generalidades;
+    if (data === 0 || data == null) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron resultados..." });
+    }
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: "Hubo un error inesperado..." });
+  }
+}
+
+export const getTipoTicketRequest = async (req, res) => {
+  try {
+    const results = await pool.query(
+      `select * from configuracion.qry_generalidades(12)`
+    );
+    const data = results.rows[0].qry_generalidades;
+    if (data === 0 || data == null) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron resultados..." });
+    }
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: "Hubo un error inesperado..." });
+  }
+}
+
+export const getProridadTicketRequest = async (req, res) => {
+  try {
+    const results = await pool.query(
+      `select * from configuracion.qry_generalidades(13)`
+    );
+    const data = results.rows[0].qry_generalidades;
+    if (data === 0 || data == null) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron resultados..." });
+    }
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: "Hubo un error inesperado..." });
+  }
+}
+
